@@ -4,10 +4,7 @@
 
 from collections import deque
 import keras
-from keras.models import Sequential
-from keras.layers import Dense
-from keras.optimizers import Adam
-from keras.models import load_model
+from tensorflow.keras.models import Sequential, load_model
 
 from hyperparameters import *
 import numpy as np
@@ -26,13 +23,13 @@ from keras import backend as K
 # https://medium.com/@karpathy/yes-you-should-understand-backprop-e2f06eab496b
 def huber_loss(a, b, in_keras=True):
     error = a - b
-    quadratic_term = error*error / 2
-    linear_term = abs(error) - 1/2
+    quadratic_term = error * error / 2
+    linear_term = abs(error) - 1 / 2
     use_linear_term = (abs(error) > 1.0)
     if in_keras:
         # Keras won't let us multiply floats by booleans, so we explicitly cast the booleans to floats
         use_linear_term = K.cast(use_linear_term, 'float32')
-    return use_linear_term * linear_term + (1-use_linear_term) * quadratic_term
+    return use_linear_term * linear_term + (1 - use_linear_term) * quadratic_term
 
 
 # returns the actual action name
@@ -42,12 +39,13 @@ def find_action(action):
     # ->
     # 0: fire (no-op) 1: right 2: left
     action = int(action)
-    if action is 0:
+    if not action:
         return 'no-op'
-    elif action is 1:
+    elif action == 1:
         return 'move right'
-    elif action is 1:
+    elif action == 1:
         return 'move left'
+
 
 # DQNAgent for breakout
 class DQNAgent():
@@ -60,10 +58,7 @@ class DQNAgent():
         # output layer mapped to an action
         self.action_space = action_space
 
-
         self.model = self.build_model()
-
-
 
     def build_model(self):
 
@@ -72,51 +67,61 @@ class DQNAgent():
 
         # without downsample: (210, 160, 3)
         # with downsample: (84, 84, 1)
-        model.add(keras.layers.Conv2D(filters = 32, 
-                                      kernel_size = (8,8),
-                                      strides = 4,
-                                      activation = 'relu',
-                                      input_shape = self.input_shape ))
+        model.add(keras.layers.Conv2D(filters=32,
+                                      kernel_size=(8, 8),
+                                      strides=4,
+                                      activation='relu',
+                                      input_shape=self.input_shape))
 
         # fed into a lower dimensional convolutional layer
-        model.add(keras.layers.Conv2D(filters = 64, 
-                                      kernel_size = (4,4),
-                                      strides = 2, 
-                                      activation = 'relu'))
+        model.add(keras.layers.Conv2D(filters=64,
+                                      kernel_size=(4, 4),
+                                      strides=2,
+                                      activation='relu'))
 
         # fed into a lower dimensional convolutional layer
-        model.add(keras.layers.Conv2D(filters = 64,
-                                      kernel_size = (3,3),
-                                      strides = 1,
-                                      activation = 'relu'))
+        model.add(keras.layers.Conv2D(filters=64,
+                                      kernel_size=(3, 3),
+                                      strides=1,
+                                      activation='relu'))
 
         model.add(keras.layers.Flatten())
 
         # dense layer 512
-        model.add(keras.layers.Dense(units = 512, 
-                                     activation = 'relu'))
+        model.add(keras.layers.Dense(units=512,
+                                     activation='relu'))
 
         # classify with softmax into a category
-        model.add(keras.layers.Dense(units = self.action_space, 
-                                     activation = 'linear'))
+        model.add(keras.layers.Dense(units=self.action_space,
+                                     activation='linear'))
 
         # try mse, mean squared error or logcosh, log of hyperbolic cosine
+
+        # try mse, mean squared error or logcosh, log of hyperbolic cosine
+        if hp['LOSS'] == 'logcosh':
+            loss = keras.losses.logcosh
+        elif hp['LOSS'] == 'mse':
+            loss = keras.losses.mse
+        elif hp['LOSS'] is 'huber':
+            loss = huber_loss
+        else:
+            loss = keras.losses.logcosh
+
+        if hp['OPTIMIZER'] == 'Adam':
+            optimizer = keras.optimizers.Adam(learning_rate=hp['LEARNING_RATE'],
+                                              epsilon=hp['MIN_SQUARED_GRADIENT'],
+                                              beta_1=hp['GRADIENT_MOMENTUM'])
+        elif hp['OPTIMIZER'] == 'RMSProp':
+            optimizer = keras.optimizers.RMSprop(learning_rate=hp['LEARNING_RATE'],
+                                                 epsilon=hp['MIN_SQUARED_GRADIENT'])
+        else:
+            optimizer = keras.optimizers.Adam(learning_rate=hp['LEARNING_RATE'],
+                                              epsilon=hp['MIN_SQUARED_GRADIENT']),
+
         model.compile(
-            
-        loss = keras.losses.logcosh if hp['LOSS'] is 'logcosh'
-                    else keras.losses.mse    if hp['LOSS'] is 'mse'
-                    else huber_loss if hp['LOSS'] is 'huber'
-                    else keras.losses.logcosh,
-                      
-        optimizer = keras.optimizers.Adam(lr = hp['LEARNING_RATE'], 
-                                          epsilon = hp['MIN_SQUARED_GRADIENT'],
-                                          beta_1 = hp['GRADIENT_MOMENTUM']) if hp['OPTIMIZER'] is 'Adam'
-                    else keras.optimizers.RMSprop(lr = hp['LEARNING_RATE'],
-                                                  epsilon = hp['MIN_SQUARED_GRADIENT']) if hp['OPTIMIZER'] is 'RMSProp'
-                    
-                    else keras.optimizers.Adam(lr = hp['LEARNING_RATE'], 
-                                          epsilon = hp['MIN_SQUARED_GRADIENT']), 
-        metrics = ['accuracy'])
+            loss=loss,
+            optimizer=optimizer,
+            metrics=['accuracy'])
 
         # show summary
         model.summary()
@@ -133,22 +138,23 @@ class DQNAgent():
         if np.random.rand() <= e:
             # select a random action
             rand = random.randrange(self.action_space)
-            
+
             # print q and decision
             if hp['WATCH_Q']:
-                print ('Random Action! Q:', Q, 'decision:', find_action(rand))
-            
-            return Q[0][rand], rand   # returns action
+                print('Random Action! Q:', Q, 'decision:', find_action(rand))
+
+            return Q[0][rand], rand  # returns action
 
         # otherwise,
         else:
             decision = np.argmax(Q)
-            
+
             # print q and decision
             if hp['WATCH_Q']:
-                print ('Q:', Q, 'decision:', find_action(decision))
+                print('Q:', Q, 'decision:', find_action(decision))
 
-            return Q[0][decision], decision          # returns action
+            return Q[0][decision], decision  # returns action
+
     # hard exits the game
     # Input: None
     # Ouput: None, but saves and exits the game
@@ -160,11 +166,11 @@ class DQNAgent():
         # exit
         print('Exiting..')
         sys.exit()
-               
+
     def save_stats(self, stats):
         time = str(datetime.datetime.now().strftime("%y-%m-%d-%H-%M"))
         print('Saving stats..')
-        
+
         if hp['DISCRETE_FRAMING']:
             # saving stats
             with open('../stats/' + time + '_discrete_stats.data', 'wb') as f:
@@ -186,17 +192,17 @@ class DQNAgent():
     # Input:  filename
     # Output: None, saves the file into a folder
     def save_weights(self):
-        
+
         if hp['DISCRETE_FRAMING']:
             # set the file name
             fn = '../weights/breakout-v4-weights-D-' + \
-            str(datetime.datetime.now().strftime("%y-%m-%d-%H-%M")) + '.h5'
+                 str(datetime.datetime.now().strftime("%y-%m-%d-%H-%M")) + '.h5'
             print('Saving weights as: ', fn)
             self.model.save_weights(fn)
         else:
             # set the file name
             fn = '../weights/breakout-v4-weights-' + \
-            str(datetime.datetime.now().strftime("%y-%m-%d-%H-%M")) + '.h5'
+                 str(datetime.datetime.now().strftime("%y-%m-%d-%H-%M")) + '.h5'
             print('Saving weights as: ', fn)
             self.model.save_weights(fn)
 

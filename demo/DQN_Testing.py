@@ -68,7 +68,7 @@ def demo():
             # initializers
             done = False
             while not done:
-                env.render()
+                env.render(mode='rgb_array')
 
                 # get next action from network
                 action = np.argmax(model.predict(frames))
