@@ -1,8 +1,7 @@
 ## Breakout Atari Agent
 <img src="https://github.com/CSCI4850/S18-team1-project/blob/master/breakout.gif" width="200px" height="auto">
+**What:** A CNN that learned to play a video game, [Atari's Breakout](https://gymnasium.farama.org/environments/atari/breakout/). \
 Results of training on a dusty GTX 1080 for 10 hours / overnight.
-
-**What:** A CNN that learned to play a video game, [Atari's Breakout](https://gymnasium.farama.org/environments/atari/breakout/).
 
 ### Model:
 This model consists of a Convolutional Neural Network with a preprocessed frame from Breakout of a (210, 160, 3) tuple => (84, 84) grayscale down-sized frame and a linear output size of 4:
