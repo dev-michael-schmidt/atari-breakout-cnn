@@ -7,9 +7,9 @@ Results of training on a dusty GTX 1080 for 10 hours / overnight.
 
 ### Model:
 This model consists of a Convolutional Neural Network with a preprocessed frame from Breakout of a (210, 160, 3) tuple => (84, 84) grayscale down-sized frame and a linear output size of 4:
-- no-op, 
-- fire, 
-- move left, 
+- no-op
+- fire
+- move left
 - move right
 
 which gets reduced down to 3 (no-op, move left, move right) because (fire) in breakout is basically a no-op. \
