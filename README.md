@@ -2,35 +2,44 @@
 <img src="https://github.com/CSCI4850/S18-team1-project/blob/master/breakout.gif" width="200px" height="auto">
 Results of training on a GTX 1080 for 10 hours.
 
+**What:** A CNN that learned to play a video game, [Atari's Breakout](https://gymnasium.farama.org/environments/atari/breakout/).
+
 ### Model:
-This model consists of a Convolutional Neural Network with a preprocessed frame from Breakout of a (210, 160, 3) tuple => (84, 84) grayscale down-sized frame and a linear output size of 4 (no-op, fire, move left, move right) which gets reduced down to 3 (no-op, move left, move right) because (fire) in breakout is basically a no-op. The model uses the Adam optimizer with a logcosh, mean squared error, or huber loss function.
+This model consists of a Convolutional Neural Network with a preprocessed frame from Breakout of a (210, 160, 3) tuple => (84, 84) grayscale down-sized frame and a linear output size of 4:
+- no-op, 
+- fire, 
+- move left, 
+- move right
+
+which gets reduced down to 3 (no-op, move left, move right) because (fire) in breakout is basically a no-op. \
+The model uses the Adam optimizer with a logcosh, mean squared error, or huber loss function.
 
 ### Requirements:
-<b>Python3.8</b>: create using conda or [asdf](https://asdf-vm.com/)
+Python3.8: create using conda or [asdf](https://asdf-vm.com/)
 
-```pip install -r requirements.txt```<br>
-<br>You will also need ```pip install tensorflow-gpu==1.7.0``` if you are using a GPU to train.<br>
+```pip install -r requirements.txt```
+~~You will also need ```pip install tensorflow-gpu==1.7.0``` if you are using a GPU to train.~~ I will also need to determine which tensorflow GPU package. `requirements.txt` / `numpy` was recently updated.
 
 ### Python Components (located in src):
-1. <b>breakout.py</b>:
+1. `breakout.py`:
   The main breakout game loop. Integrates with all of the components.
 
-2. <b>DQNAgent.py</b>:
+2. `DQNAgent.py`:
   The Deep Q Network Agent for learning the breakout game.
 
-3. <b>ReplayMemory.py</b>:
+3. `ReplayMemory.py`:
   The Remembering and Replaying for the DQNAgent to learn.
   
-4. <b>hyperparameters.py</b>:
+4. `hyperparameters.py`:
   All of the hyperparameters
   
-5. <b>discrete_frames.py</b>:
+5. `discrete_frames.py`:
     Discrete frames into the model and memory. More memory footprint, more backpropogation steps.
 
-6. <b>sliding_frames.py</b>:
+6. `sliding_frames.py`:
     Sliding frames into the model and memory. Less memory footprint, less backpropagation steps.
     
-7. <b>utils.py</b>:
+7. `utils.py`:
     List of utility functions used by numerous components.
 
 ### Breakout Main Loop: 
@@ -119,16 +128,15 @@ This model consists of a Convolutional Neural Network with a preprocessed frame 
                                    # default: 8
                                    
 ### Instructions:
-To start the breakout game with the DQN Agent, run ```python3 breakout.py```
-<br>
+To start the breakout game with the DQN Agent, run ```python3 breakout.py``` \
 To change how the DQN Agent learns, modify hyperparameters.py
 
 ### Demo:
-To start the demo, run ```python3 DQN_Testing.py```<br>
+To start the demo, run ```python3 DQN_Testing.py```
 Alternatively, there is a python notebook under DQN_Testing.ipynb which renders every 6 frames.
-<br>
 
-### References:
+
+### Useful References (From start to keras):
 1. http://docs.python-guide.org/en/latest/starting/installation/
 2. https://www.makeuseof.com/tag/install-pip-for-python/
 3. https://storage.googleapis.com/deepmind-media/dqn/DQNNaturePaper.pdf
