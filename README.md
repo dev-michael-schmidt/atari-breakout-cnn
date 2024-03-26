@@ -19,7 +19,7 @@ The model uses the Adam optimizer with a logcosh, mean squared error, or huber l
 Python3.8: create using conda or [asdf](https://asdf-vm.com/)
 
 ```pip install -r requirements.txt```
-~~You will also need ```pip install tensorflow-gpu==1.7.0``` if you are using a GPU to train.~~ I will also need to determine which tensorflow GPU package. `requirements.txt` / `numpy` was recently updated.
+~~You will also need ```pip install tensorflow-gpu==1.7.0``` if you are using a GPU to train.~~ I will also need to determine which tensorflow package if training on a GPU. `requirements.txt` / `numpy` was recently updated and I don't know.  I just don't.
 
 ### Python Components (located in src):
 1. `breakout.py`:
