@@ -1,25 +1,13 @@
-<h1>Neocognitron Group</hi>
-
 ## Breakout Atari Agent
 <img src="https://github.com/CSCI4850/S18-team1-project/blob/master/breakout.gif" width="200px" height="auto">
 Results of training on a GTX 1080 for 10 hours.
 
 ### Model:
-Our model consists of a Convolutional Neural Network with a preprocessed frame from Breakout of a (210, 160, 3) tuple => (84, 84) grayscale down-sized frame and a linear output size of 4 (no-op, fire, move left, move right) which gets reduced down to 3 (no-op, move left, move right) because (fire) in breakout is basically a no-op. The model uses the Adam optimizer with a logcosh, mean squared error, or huber loss function.
+This model consists of a Convolutional Neural Network with a preprocessed frame from Breakout of a (210, 160, 3) tuple => (84, 84) grayscale down-sized frame and a linear output size of 4 (no-op, fire, move left, move right) which gets reduced down to 3 (no-op, move left, move right) because (fire) in breakout is basically a no-op. The model uses the Adam optimizer with a logcosh, mean squared error, or huber loss function.
 
-#### Requirements:
-<b>python3</b>: need help installing? <a href="http://docs.python-guide.org/en/latest/starting/installation/">click here!</a><br>
-<b>pip</b> (python's package manager): need help installing? <a href="https://www.makeuseof.com/tag/install-pip-for-python/">click here!</a><br>
+### Requirements:
+<b>Python3.8</b>: create using conda or [asdf](https://asdf-vm.com/)
 
-    numpy==1.13.3
-    scikit_image==0.13.1
-    Keras==2.1.3
-    gym==0.9.5
-    gym[atari]
-    h5py==2.7.1
-    Pillow==5.1.0
-
-or just do:
 ```pip install -r requirements.txt```<br>
 <br>You will also need ```pip install tensorflow-gpu==1.7.0``` if you are using a GPU to train.<br>
 
@@ -44,7 +32,8 @@ or just do:
     
 7. <b>utils.py</b>:
     List of utility functions used by numerous components.
-#### Breakout Main Loop: 
+
+### Breakout Main Loop: 
     'GAME' : 'BreakoutDeterministic-v4', # Name of which game to use
                                          # v1-4 Deterministic or Not
 
@@ -134,7 +123,7 @@ To start the breakout game with the DQN Agent, run ```python3 breakout.py```
 <br>
 To change how the DQN Agent learns, modify hyperparameters.py
 
-### Demo (located in demo):
+### Demo:
 To start the demo, run ```python3 DQN_Testing.py```<br>
 Alternatively, there is a python notebook under DQN_Testing.ipynb which renders every 6 frames.
 <br>
